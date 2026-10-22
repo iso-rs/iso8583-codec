@@ -92,7 +92,7 @@ pub enum Error {
         field: u8,
     },
 
-    /// A numeric field contained a byte that is not an ASCII digit.
+    /// A numeric field contained a byte that is not a decimal digit.
     InvalidDigit {
         /// Field number, when known.
         field: Option<u8>,
@@ -144,7 +144,7 @@ impl fmt::Display for Error {
         match self {
             Error::UnexpectedEof { needed, remaining } => write!(
                 f,
-                "unexpected end of input: needed {needed} more byte(s), {remaining} left"
+                "unexpected end of input: wanted {needed} byte(s), {remaining} left"
             ),
             Error::InvalidMtiLength { actual } => {
                 write!(f, "invalid MTI length {actual}: expected 4 bytes")
@@ -193,7 +193,7 @@ impl fmt::Display for Error {
                 actual,
             } => write!(
                 f,
-                "field {field} has fixed length {expected}, but the value is {actual} character(s)"
+                "field {field} has fixed length {expected}, but the value has length {actual}"
             ),
             Error::InvalidLengthPrefix { field } => {
                 write!(f, "field {field} has an invalid length prefix")
@@ -201,11 +201,11 @@ impl fmt::Display for Error {
             Error::InvalidDigit { field, byte } => match field {
                 Some(field) => write!(
                     f,
-                    "field {field} contains 0x{byte:02X}, which is not an ASCII digit"
+                    "field {field} contains 0x{byte:02X}, which is not a decimal digit"
                 ),
                 None => write!(
                     f,
-                    "value contains 0x{byte:02X}, which is not an ASCII digit"
+                    "value contains 0x{byte:02X}, which is not a decimal digit"
                 ),
             },
             Error::InvalidTextByte { field, byte } => match field {

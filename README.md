@@ -67,6 +67,10 @@ assert_eq!(parsed.field(4).unwrap().as_digits(), Some("000000010000"));
 | Errors | Structured, field-aware error enum |
 | Tests | Unit, integration, property-based round trips |
 
+Parsed values preserve the wire representation: numeric fields keep leading
+zeros, and text fields keep their on-wire padding. Normalize those at the
+application layer if your profile treats them as insignificant.
+
 ## Defining a custom spec
 
 Networks routinely change field lengths or encodings. Build a spec instead of

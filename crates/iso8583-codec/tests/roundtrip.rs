@@ -182,6 +182,39 @@ fn rejects_value_that_does_not_fit_fixed_field() {
 }
 
 #[test]
+fn rejects_empty_numeric_field() {
+    let spec = Spec::builder("test")
+        .field(FieldSpec::numeric(2, "PAN", Length::llvar(19)))
+        .build()
+        .unwrap();
+
+    let mut bytes = Vec::new();
+    bytes.extend_from_slice(b"0100");
+    bytes.extend_from_slice(&[0x40, 0, 0, 0, 0, 0, 0, 0]);
+    bytes.extend_from_slice(b"00");
+
+    assert_eq!(
+        Message::parse(&spec, &bytes).unwrap_err(),
+        Error::EmptyDigits
+    );
+}
+
+#[test]
+fn rejects_empty_numeric_value_when_encoding() {
+    let spec = Spec::builder("test")
+        .field(FieldSpec::numeric(2, "PAN", Length::llvar(19)))
+        .build()
+        .unwrap();
+
+    let mut message = Message::new(Mti::parse(b"0100").unwrap());
+    message
+        .set_field(2, FieldValue::Digits(String::new()))
+        .unwrap();
+
+    assert_eq!(message.encode(&spec).unwrap_err(), Error::EmptyDigits);
+}
+
+#[test]
 fn rejects_field_type_mismatch() {
     let spec = Spec::builder("test")
         .field(FieldSpec::numeric(3, "Processing Code", Length::fixed(6)))

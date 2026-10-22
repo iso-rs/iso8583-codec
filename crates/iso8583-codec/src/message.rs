@@ -234,11 +234,17 @@ fn parse_field(cursor: &mut Cursor<'_>, spec: &FieldSpec) -> Result<FieldValue, 
     let raw = cursor.take(byte_length)?;
 
     match spec.kind {
-        FieldKind::Numeric => match spec.encoding {
-            Encoding::Ascii => Ok(FieldValue::Digits(decode_ascii_digits(raw, spec.number)?)),
-            Encoding::Bcd => Ok(FieldValue::Digits(decode_bcd(raw, length, spec.number)?)),
-            Encoding::Binary => Err(Error::UnsupportedEncoding { field: spec.number }),
-        },
+        FieldKind::Numeric => {
+            if length == 0 {
+                return Err(Error::EmptyDigits);
+            }
+
+            match spec.encoding {
+                Encoding::Ascii => Ok(FieldValue::Digits(decode_ascii_digits(raw, spec.number)?)),
+                Encoding::Bcd => Ok(FieldValue::Digits(decode_bcd(raw, length, spec.number)?)),
+                Encoding::Binary => Err(Error::UnsupportedEncoding { field: spec.number }),
+            }
+        }
         FieldKind::Text => {
             if spec.encoding != Encoding::Ascii {
                 return Err(Error::UnsupportedEncoding { field: spec.number });
@@ -367,6 +373,10 @@ fn decode_prefix(prefix: Prefix, raw: &[u8], field: u8) -> Result<usize, Error> 
 fn encode_field(out: &mut Vec<u8>, spec: &FieldSpec, value: &FieldValue) -> Result<(), Error> {
     let mut data = match (spec.kind, value) {
         (FieldKind::Numeric, FieldValue::Digits(digits)) => {
+            if digits.is_empty() {
+                return Err(Error::EmptyDigits);
+            }
+
             for &byte in digits.as_bytes() {
                 if !byte.is_ascii_digit() {
                     return Err(Error::InvalidDigit {

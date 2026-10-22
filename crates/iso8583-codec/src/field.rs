@@ -14,6 +14,9 @@ use crate::error::Error;
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum FieldValue {
     /// Printable ASCII text (`AN`, `ANS`, `Z` and similar fields).
+    ///
+    /// Parsing preserves on-wire padding. If your profile treats trailing
+    /// spaces as insignificant, trim the value at the application layer.
     Text(String),
     /// ASCII digits (`N` fields, including BCD-encoded fields).
     Digits(String),
