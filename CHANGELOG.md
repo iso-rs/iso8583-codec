@@ -23,4 +23,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `no_std` support via `alloc`; `std` is an optional default feature.
 - Unit, integration and property-based round-trip tests.
 - Hex decoder example.
+- Tag-driven crates.io publishing workflow with OIDC trusted publishing support.
+
+[Unreleased]: https://github.com/iso-rs/iso8583-codec/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/iso-rs/iso8583-codec/releases/tag/v0.1.0
 

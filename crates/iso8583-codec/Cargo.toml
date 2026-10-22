@@ -2,6 +2,7 @@
 name = "iso8583-codec"
 description = "A safe, spec-driven ISO 8583 message codec with no_std support"
 readme = "../../README.md"
+repository = "https://github.com/iso-rs/iso8583-codec"
 documentation = "https://docs.rs/iso8583-codec"
 version.workspace = true
 edition.workspace = true

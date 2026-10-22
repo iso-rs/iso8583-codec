@@ -5,6 +5,7 @@ financial transaction messages, written in Rust.
 
 [![Crates.io](https://img.shields.io/crates/v/iso8583-codec.svg)](https://crates.io/crates/iso8583-codec)
 [![docs.rs](https://docs.rs/iso8583-codec/badge.svg)](https://docs.rs/iso8583-codec)
+[![CI](https://github.com/iso-rs/iso8583-codec/actions/workflows/ci.yml/badge.svg)](https://github.com/iso-rs/iso8583-codec/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
 ## Why another ISO 8583 crate?
@@ -34,22 +35,24 @@ iso8583-codec = "0.1"
 ```rust
 use iso8583_codec::{FieldValue, Message, Mti, Spec};
 
-let spec = Spec::iso8583_1987();
+fn main() -> Result<(), iso8583_codec::Error> {
+    let spec = Spec::iso8583_1987();
 
-let mut message = Message::new(Mti::parse(b"0100")?);
-message.set_field(2, FieldValue::digits("4242424242424242")?)?;
-message.set_field(3, FieldValue::digits("000000")?)?;
-message.set_field(4, FieldValue::digits("000000010000")?)?;
-message.set_field(11, FieldValue::digits("000123")?)?;
-message.set_field(49, FieldValue::digits("840")?)?;
+    let mut message = Message::new(Mti::parse(b"0100")?);
+    message.set_field(2, FieldValue::digits("4242424242424242")?)?;
+    message.set_field(3, FieldValue::digits("000000")?)?;
+    message.set_field(4, FieldValue::digits("000000010000")?)?;
+    message.set_field(11, FieldValue::digits("000123")?)?;
+    message.set_field(49, FieldValue::digits("840")?)?;
 
-let wire = message.encode(&spec)?;
-let parsed = Message::parse(&spec, &wire)?;
+    let wire = message.encode(&spec)?;
+    let parsed = Message::parse(&spec, &wire)?;
 
-assert_eq!(parsed.mti().as_str(), "0100");
-assert_eq!(parsed.field(2).unwrap().as_digits(), Some("4242424242424242"));
-assert_eq!(parsed.field(4).unwrap().as_digits(), Some("000000010000"));
-# Ok::<(), iso8583_codec::Error>(())
+    assert_eq!(parsed.mti().as_str(), "0100");
+    assert_eq!(parsed.field(2).unwrap().as_digits(), Some("4242424242424242"));
+    assert_eq!(parsed.field(4).unwrap().as_digits(), Some("000000010000"));
+    Ok(())
+}
 ```
 
 ## What is implemented
@@ -79,22 +82,31 @@ patching the codec:
 ```rust
 use iso8583_codec::{Encoding, FieldSpec, Length, Padding, Prefix, Spec};
 
-let spec = Spec::builder("acme-2026")
-    .field(FieldSpec::numeric(2, "PAN", Length::llvar(19)))
-    .field(
-        FieldSpec::numeric(4, "Amount", Length::fixed(12))
+fn main() -> Result<(), iso8583_codec::Error> {
+    let spec = Spec::builder("acme-2026")
+        .field(FieldSpec::numeric(2, "PAN", Length::llvar(19)))
+        .field(
+            FieldSpec::numeric(4, "Amount", Length::fixed(12))
+                .with_encoding(Encoding::Bcd),
+        )
+        .field(
+            FieldSpec::numeric(
+                32,
+                "Acquiring Institution",
+                Length::variable(11, Prefix::Bcd(2)),
+            )
             .with_encoding(Encoding::Bcd),
-    )
-    .field(
-        FieldSpec::numeric(32, "Acquiring Institution", Length::variable(11, Prefix::Bcd(2)))
-            .with_encoding(Encoding::Bcd),
-    )
-    .field(
-        FieldSpec::text(43, "Card Acceptor", Length::fixed(40))
-            .with_padding(Padding::Right(b' ')),
-    )
-    .build()?;
-# Ok::<(), iso8583_codec::Error>(())
+        )
+        .field(
+            FieldSpec::text(43, "Card Acceptor", Length::fixed(40))
+                .with_padding(Padding::Right(b' ')),
+        )
+        .build()?;
+
+    assert_eq!(spec.name(), "acme-2026");
+    assert_eq!(spec.fields().len(), 4);
+    Ok(())
+}
 ```
 
 The built-in 1987 table exposes field 55 as text. If your profile carries raw
@@ -149,6 +161,9 @@ MTI: 0810
 Fields: 1
 F039 Response Code: 00
 ```
+
+Releases are tag-driven. See [docs/publishing.md](docs/publishing.md) for the
+one-time crates.io setup, trusted publishing, and the release checklist.
 
 ## Security
 

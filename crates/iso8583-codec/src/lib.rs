@@ -58,10 +58,6 @@
 
 extern crate alloc;
 
-#[cfg(doctest)]
-#[doc = include_str!("../../../README.md")]
-struct ReadmeDoctests;
-
 pub mod bitmap;
 pub mod error;
 pub mod field;
