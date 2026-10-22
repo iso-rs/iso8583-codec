@@ -28,6 +28,9 @@ jobs:
       - name: Test
         run: cargo test --all-targets --all-features
 
+      - name: Doc tests
+        run: cargo test --doc --all-features
+
       - name: Build without std
         run: cargo build --no-default-features
 
@@ -48,3 +51,6 @@ jobs:
       # to the library and its (empty) runtime dependency set.
       - name: Check library
         run: cargo check --lib --all-features
+
+      - name: Check library without std
+        run: cargo check --lib --no-default-features

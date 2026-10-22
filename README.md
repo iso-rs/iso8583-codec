@@ -97,6 +97,11 @@ let spec = Spec::builder("acme-2026")
 # Ok::<(), iso8583_codec::Error>(())
 ```
 
+The built-in 1987 table exposes field 55 as text. If your profile carries raw
+BER-TLV bytes, define field 55 as
+`FieldSpec::binary(55, "ICC Data", Length::lllvar(999))` and decode the TLV at
+the application layer. Structured TLV support is planned for `0.2`.
+
 ## `no_std`
 
 ```toml

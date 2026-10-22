@@ -1,7 +1,10 @@
 //! Decode a hex-encoded ISO 8583 message with the built-in 1987 spec.
 //!
+//! The argument is the hex encoding of the raw message bytes, not of the
+//! printable field text.
+//!
 //! ```text
-//! cargo run --example decode_hex -- 01007238448100E08000164242424242424242000000...
+//! cargo run -p iso8583-codec --example decode_hex -- 3038313000000000020000003030
 //! ```
 
 use std::env;
