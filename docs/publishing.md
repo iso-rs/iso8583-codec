@@ -92,13 +92,13 @@ OIDC path. The next release validates it end to end:
 5. Tag and push:
 
    ```text
-   git tag v0.1.0
+   git tag vX.Y.Z
    git push origin main
-   git push origin v0.1.0
+   git push origin vX.Y.Z
    ```
 
 The workflow refuses to publish when the tag does not match the crate version
-(`v0.1.0` must match `version = "0.1.0"`). crates.io does not allow overwriting
+(`vX.Y.Z` must match `version = "X.Y.Z"`). crates.io does not allow overwriting
 a published version, so a failed release needs a version bump rather than a
 re-tag.
 

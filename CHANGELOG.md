@@ -6,6 +6,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-23
+
+Maintenance release. No wire-format or public API changes; this version is the
+first one published through the OIDC trusted publishing workflow.
+
 ## [0.1.0] - 2026-10-22
 
 ### Added
@@ -25,6 +30,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Hex decoder example.
 - Tag-driven crates.io publishing workflow with OIDC trusted publishing support.
 
-[Unreleased]: https://github.com/iso-rs/iso8583-codec/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/iso-rs/iso8583-codec/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/iso-rs/iso8583-codec/releases/tag/v0.1.1
 [0.1.0]: https://github.com/iso-rs/iso8583-codec/releases/tag/v0.1.0
 
