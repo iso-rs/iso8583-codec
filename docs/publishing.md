@@ -31,18 +31,45 @@ scope (and `publish-update` for later releases).
 
 After the first version is on crates.io:
 
-1. Open the crate on crates.io → **Settings** → **Trusted Publishing**.
+1. Open <https://crates.io/crates/iso8583-codec/settings> → **Trusted
+   Publishing**.
 2. Add a GitHub publisher:
-   - Owner: `iso-rs`
-   - Repository: `iso8583-codec`
+   - Repository owner: `iso-rs`
+   - Repository name: `iso8583-codec`
    - Workflow filename: `publish.yml`
    - Environment: `crates-io`
-3. Delete the `CARGO_REGISTRY_TOKEN` repository secret.
-4. Optionally add protection rules to the `crates-io` GitHub environment.
+3. Create the matching GitHub environment: repository **Settings** →
+   **Environments** → **New environment** → `crates-io`.
+   If you add deployment rules, allow the `v*` tag pattern; otherwise tag
+   pushes cannot enter the environment.
+4. Delete the `CARGO_REGISTRY_TOKEN` repository secret. As long as it exists,
+   the workflow uses the long-lived token instead of OIDC.
+5. Optionally add required reviewers to the `crates-io` environment so every
+   publish waits for approval.
 
 With the secret gone, the workflow authenticates through GitHub OIDC using
 `rust-lang/crates-io-auth-action` and a short-lived crates.io token. No
 long-lived credential is stored.
+
+The trusted publisher configuration must match all four values exactly:
+repository owner, repository name, workflow filename and environment.
+
+### Verifying trusted publishing
+
+A version can only be published once, so `0.1.0` cannot be reused to test the
+OIDC path. The next release validates it end to end:
+
+1. Bump the version, for example to `0.1.1`.
+2. Update `CHANGELOG.md`, commit and push.
+3. Tag and push:
+
+   ```text
+   git tag v0.1.1
+   git push origin v0.1.1
+   ```
+
+4. Open the **Publish** workflow run. The **Authenticate with crates.io** step
+   should succeed without any repository secret, followed by the publish step.
 
 ## Releasing a version
 
