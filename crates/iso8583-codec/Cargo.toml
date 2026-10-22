@@ -1,0 +1,21 @@
+[package]
+name = "iso8583-codec"
+description = "A safe, spec-driven ISO 8583 message codec with no_std support"
+readme = "../../README.md"
+documentation = "https://docs.rs/iso8583-codec"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]
+
+[dev-dependencies]
+hex = "0.4"
+proptest.workspace = true
